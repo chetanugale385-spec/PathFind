@@ -20,27 +20,22 @@ def generate_roadmap():
         data = request.json
         prompt_text = data.get('prompt', 'Career roadmap')
 
-        # ERROR DEBUGGED HERE: model name se 'models/' prefix hata diya hai
-        model = genai.GenerativeModel('gemini-1.5-flash')
-
-        # Flowchart aur Mistakes ke liye customized prompt
-        refined_prompt = (
-            f"Act as a career coach. For a {prompt_text}, provide:\n"
-            "1. JOURNEY FLOWCHART: 4 clear steps with '->' arrows.\n"
-            "2. 4 CRITICAL MISTAKES TO AVOID.\n"
-            "Keep it professional and concise."
-        )
-
-        response = model.generate_content(refined_prompt)
+        # Pehle 'gemini-1.5-flash' try karega, agar nahi mila toh 'gemini-pro'
+        try:
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            response = model.generate_content(prompt_text)
+        except:
+            # Ye backup model hai jo 100% har key par chalta hai
+            model = genai.GenerativeModel('gemini-pro')
+            response = model.generate_content(prompt_text)
 
         if response.text:
             return jsonify({"roadmap": response.text})
         else:
-            return jsonify({"error": "Empty response from AI"}), 500
+            return jsonify({"error": "AI response is empty"}), 500
 
     except Exception as e:
-        print(f"Error occurred: {str(e)}")
-        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
+        return jsonify({"error": "Model Error", "details": str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
