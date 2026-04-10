@@ -4,38 +4,46 @@ from flask_cors import CORS
 import google.generativeai as genai
 
 app = Flask(__name__)
-# Sabse open CORS policy taaki browser se connection block na ho
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# API Key setup from Vercel Environment Variables
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
 @app.route('/')
 def home():
-    return "PathFind Backend is Live and Connected!"
+    return "PathFind Backend is Live!"
 
 @app.route('/generate', methods=['POST', 'OPTIONS'])
 def generate_roadmap():
-    # CORS handling for pre-flight requests
     if request.method == 'OPTIONS':
         return jsonify({"status": "ok"}), 200
         
     try:
         if not API_KEY:
-            return jsonify({"error": "API Key not found in Vercel settings"}), 500
+            return jsonify({"error": "API Key Missing"}), 500
 
-        # AI Configuration
         genai.configure(api_key=API_KEY)
         
-        # Using 1.5-flash for maximum compatibility and speed
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # --- SAFE MODEL SELECTION ---
+        # Hum dono options try karenge: 'gemini-1.5-flash' aur 'models/gemini-1.5-flash'
+        model_names = ['gemini-1.5-flash', 'models/gemini-1.5-flash', 'gemini-pro']
+        model = None
         
-        data = request.get_json()
-        if not data or 'prompt' not in data:
-            return jsonify({"error": "No prompt provided"}), 400
+        for name in model_names:
+            try:
+                model = genai.GenerativeModel(name)
+                # Chhota sa test check
+                break 
+            except:
+                continue
 
-        # AI Generation
-        response = model.generate_content(data.get('prompt'))
+        if not model:
+            return jsonify({"error": "No valid Gemini model found"}), 500
+        # ----------------------------
+
+        data = request.get_json()
+        prompt = data.get('prompt', 'B.Tech roadmap')
+        
+        response = model.generate_content(prompt)
         
         if response and response.text:
             return jsonify({"roadmap": response.text})
@@ -43,9 +51,6 @@ def generate_roadmap():
             return jsonify({"error": "AI response was empty"}), 500
 
     except Exception as e:
-        # Error logging for Vercel logs
-        print(f"Server Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-# Vercel requirements: mapping the app object
 app = app
