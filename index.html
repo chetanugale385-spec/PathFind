@@ -1,53 +1,74 @@
-<script>
-    // 1. URL ekdum dhyan se check karein (End mein /generate hona zaroori hai)
-    const API_URL = "https://pathfind.onrender.com/generate"; 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathFind AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-white font-sans min-h-screen">
+    <div class="max-w-md mx-auto p-6 text-center">
+        <h1 class="text-3xl font-bold text-blue-400 mt-10">PathFind AI</h1>
+        <p class="text-slate-400 mt-2">Professional Career Roadmaps</p>
 
-    document.getElementById('generate-btn').addEventListener('click', async () => {
-        const branch = document.getElementById('branch').value;
-        const interest = document.getElementById('interest').value;
-        const button = document.getElementById('generate-btn');
-        const outputSection = document.getElementById('output-section');
-        const roadmapContainer = document.getElementById('roadmap-container');
+        <div class="mt-10 space-y-4">
+            <select id="branch" class="w-full p-4 bg-slate-800 rounded-xl border border-slate-700 outline-none">
+                <option value="AIML">AIML</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Cyber Security">Cyber Security</option>
+            </select>
 
-        if (!interest) { alert("Please enter a tech interest!"); return; }
+            <input type="text" id="interest" placeholder="Enter Interest (e.g. Python)" 
+                   class="w-full p-4 bg-slate-800 rounded-xl border border-slate-700 outline-none">
 
-        // UI update
-        button.innerText = "Connecting to AI...";
-        button.disabled = true;
-        outputSection.classList.add('hidden');
+            <button id="generate-btn" class="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold transition-all">
+                Generate Roadmap
+            </button>
+        </div>
 
-        try {
-            // 2. Fetch call with explicit settings
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ prompt: `B.Tech student in ${branch}. Interest: ${interest}.` })
-            });
+        <div id="output-section" class="mt-10 hidden text-left">
+            <h2 class="text-xl font-semibold mb-4 text-blue-300">Your AI Roadmap:</h2>
+            <div id="roadmap-container" class="p-6 bg-slate-900 border border-blue-500/30 rounded-2xl shadow-xl">
+                </div>
+        </div>
+    </div>
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Server Response: ${response.status} - ${errorText}`);
+    <script>
+        const API_URL = "https://pathfind.onrender.com/generate"; 
+
+        document.getElementById('generate-btn').addEventListener('click', async () => {
+            const branch = document.getElementById('branch').value;
+            const interest = document.getElementById('interest').value;
+            const button = document.getElementById('generate-btn');
+            const outputSection = document.getElementById('output-section');
+            const roadmapContainer = document.getElementById('roadmap-container');
+
+            if (!interest) { alert("Please enter your interest!"); return; }
+
+            button.innerText = "AI is thinking...";
+            button.disabled = true;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: `B.Tech student in ${branch}. Interested in ${interest}.` })
+                });
+
+                if (!response.ok) throw new Error("Server not responding");
+
+                const data = await response.json();
+                outputSection.classList.remove('hidden');
+                roadmapContainer.innerText = data.roadmap;
+
+            } catch (error) {
+                alert("Please wait 1 minute and try again. Server is waking up.");
+                console.error(error);
+            } finally {
+                button.innerText = "Generate Roadmap";
+                button.disabled = false;
             }
-
-            const data = await response.json();
-            
-            // 3. Render Output
-            outputSection.classList.remove('hidden');
-            roadmapContainer.innerHTML = `
-                <div class="p-6 bg-slate-900 border border-blue-500/30 rounded-2xl shadow-xl">
-                    <p class="text-white whitespace-pre-wrap leading-relaxed">${data.roadmap}</p>
-                </div>`;
-
-        } catch (error) {
-            // 4. Detailed Error for Troubleshooting
-            console.error("Connection Error:", error);
-            alert("ASLI ERROR YAHAN HAI:\n" + error.message + "\n\nTip: Check if https://pathfind.onrender.com/ is awake!");
-        } finally {
-            button.innerText = "Generate My Roadmap";
-            button.disabled = false;
-        }
-    });
-</script>
+        });
+    </script>
+</body>
+</html>
