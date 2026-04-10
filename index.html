@@ -34,8 +34,9 @@
     </div>
 
 <script>
-    // 1. Backend URL (Verify karein ki spelling sahi hai)
-    const API_URL = "https://pathfind.onrender.com/generate"; 
+    // 1. Apni Gemini API Key yahan paste karein
+    const API_KEY = "YAHAN_APNI_API_KEY_DALO"; 
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
     document.getElementById('generate-btn').addEventListener('click', async () => {
         const branch = document.getElementById('branch').value;
@@ -44,58 +45,39 @@
         const outputSection = document.getElementById('output-section');
         const roadmapContainer = document.getElementById('roadmap-container');
 
-        // Validation
-        if (!interest.trim()) {
-            alert("Bhai, pehle apna interest (e.g. Python) toh likho!");
-            return;
-        }
+        if (!interest.trim()) { alert("Please enter an interest!"); return; }
 
-        // UI updates: Button disable aur loading state
-        button.innerText = "AI is generating roadmap...";
+        button.innerText = "AI is thinking...";
         button.disabled = true;
-        outputSection.classList.add('hidden');
 
         try {
-            // 2. Fetch call with timeout logic
             const response = await fetch(API_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    prompt: `B.Tech ${branch} student. Focus on ${interest}.` 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: `Act as a career counselor. Provide a short 4-step roadmap for a B.Tech ${branch} student interested in ${interest}.` }]
+                    }]
                 })
             });
 
-            // Agar server 404 ya 500 de
-            if (!response.ok) {
-                throw new Error(`Server Error: ${response.status}`);
-            }
-
             const data = await response.json();
-
-            // 3. Display Result
-            if (data.roadmap) {
+            
+            // Check if AI gave a response
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                const roadmapText = data.candidates[0].content.parts[0].text;
                 outputSection.classList.remove('hidden');
-                roadmapContainer.innerHTML = `
-                    <div class="p-5 bg-slate-900 border-l-4 border-blue-500 rounded-r-xl text-slate-200">
-                        <p class="whitespace-pre-wrap leading-relaxed text-sm md:text-base">
-                            ${data.roadmap}
-                        </p>
-                    </div>
-                `;
+                roadmapContainer.innerHTML = `<div class="p-4 bg-slate-800 rounded-lg text-white whitespace-pre-wrap">${roadmapText}</div>`;
             } else {
-                throw new Error("Empty roadmap received");
+                throw new Error("AI response empty");
             }
 
         } catch (error) {
-            console.error("Error details:", error);
-            alert("Server abhi jaag raha hai (Waking up). Kripya 20-30 seconds baad phir se button dabayein.");
+            console.error(error);
+            alert("API Connection Error. Please check your internet or API Key.");
         } finally {
-            // Button wapas enable karna
-            button.innerText = "Generate My Roadmap";
+            button.innerText = "Generate Roadmap";
             button.disabled = false;
         }
     });
 </script>
-    
