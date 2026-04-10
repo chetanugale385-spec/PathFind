@@ -47,68 +47,60 @@
             ZCOER Pune • Project by Chetan
         </p>
     </div>
+<script>
+    const API_URL = "https://pathfind.onrender.com/generate"; 
 
-    <script>
-        const API_URL = "https://pathfind.onrender.com/generate"; 
+    document.getElementById('generate-btn').addEventListener('click', async () => {
+        const branch = document.getElementById('branch').value;
+        const interest = document.getElementById('interest').value;
+        const button = document.getElementById('generate-btn');
+        const outputSection = document.getElementById('output-section');
+        const roadmapContainer = document.getElementById('roadmap-container');
 
-        document.getElementById('generate-btn').addEventListener('click', async () => {
-            const branch = document.getElementById('branch').value;
-            const interest = document.getElementById('interest').value;
-            const button = document.getElementById('generate-btn');
-            const outputSection = document.getElementById('output-section');
-            const roadmapContainer = document.getElementById('roadmap-container');
+        if (!interest.trim()) { alert("Interest empty hai!"); return; }
 
-            if (!interest.trim()) { 
-                alert("Please enter an interest!"); 
-                return; 
+        button.innerText = "Connecting...";
+        button.disabled = true;
+
+        try {
+            // Mobile par request check karne ke liye timeout
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), 25000); // 25s timeout
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    prompt: `B.Tech ${branch} student interested in ${interest}` 
+                }),
+                signal: controller.signal
+            });
+
+            clearTimeout(id);
+
+            if (!response.ok) {
+                const errData = await response.json();
+                alert("Backend Error: " + (errData.message || response.status));
+                return;
             }
 
-            button.innerText = "Connecting to AI Backend...";
-            button.disabled = true;
-            outputSection.classList.add('hidden');
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        // FIXED: Using backticks for template literals
-                        prompt: `B.Tech ${branch} student interested in ${interest}` 
-                    })
-                });
-
-                if (!response.ok) throw new Error("Backend offline or Error 500");
-
-                const data = await response.json();
-
-                if (data.roadmap) {
-                    outputSection.classList.remove('hidden');
-                    
-                    // Formatting the AI response
-                    let aiText = data.roadmap;
-                    
-                    roadmapContainer.innerHTML = `
-                        <div class="p-5 bg-slate-800/50 border border-slate-700 rounded-2xl shadow-inner">
-                            <h3 class="text-blue-400 font-bold mb-3 uppercase text-[10px]">Step-by-Step Journey</h3>
-                            <div class="whitespace-pre-wrap text-sm text-slate-300 leading-relaxed font-mono">
-                                ${aiText.replace(/\*/g, '•')}
-                            </div>
-                        </div>
-                        <div class="p-4 bg-red-900/10 border border-red-900/20 rounded-xl">
-                            <p class="text-red-400 text-xs italic">Note: Follow this roadmap consistently for best results.</p>
-                        </div>
-                    `;
-                    
-                    outputSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Server is warming up (Cold Start). Please wait 30 seconds and try again!");
-            } finally {
-                button.innerText = "Generate Roadmap";
-                button.disabled = false;
+            const data = await response.json();
+            if (data.roadmap) {
+                outputSection.classList.remove('hidden');
+                roadmapContainer.innerHTML = `<div class="p-4 bg-slate-800 rounded-xl whitespace-pre-wrap text-sm">${data.roadmap.replace(/\*/g, '•')}</div>`;
+                window.scrollTo(0, document.body.scrollHeight);
             }
-        });
-    </script>
+
+        } catch (error) {
+            // Ye alert mobile par sabse kaam aayega
+            alert("Connection Failed!\n1. Check if https://pathfind.onrender.com is opening in browser.\n2. Render might be starting up (Wait 30s).\n3. Error: " + error.message);
+        } finally {
+            button.innerText = "Generate Roadmap";
+            button.disabled = false;
+        }
+    });
+</script>
+    
+    
 </body>
 </html>
