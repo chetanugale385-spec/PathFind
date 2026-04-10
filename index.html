@@ -63,70 +63,56 @@
     </div>
 
     <script>
-    document.getElementById('generate-btn').addEventListener('click', () => {
+    // 1. Apni API Key dhyan se check karke yahan dalo
+    const API_KEY = "AIzaSyA5nFFYWKPDRYZUtMY4JPqAzNPCxjqXSJY"; 
+    const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+    document.getElementById('generate-btn').addEventListener('click', async () => {
         const branch = document.getElementById('branch').value;
-        const interest = document.getElementById('interest').value.toLowerCase();
+        const interest = document.getElementById('interest').value;
+        const button = document.getElementById('generate-btn');
         const outputSection = document.getElementById('output-section');
         const roadmapContainer = document.getElementById('roadmap-container');
-        const button = document.getElementById('generate-btn');
 
-        if (!interest.trim()) { alert("Please enter an interest!"); return; }
+        if (!interest.trim()) return;
 
-        button.innerText = "Analyzing Skill Gap...";
+        button.innerText = "AI is thinking...";
         button.disabled = true;
 
-        setTimeout(() => {
-            outputSection.classList.remove('hidden');
-            
-            let roadmapContent = "";
+        try {
+            const response = await fetch(URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: `Generate a unique, detailed 4-step professional career roadmap for a B.Tech ${branch} student specializing in ${interest}. Give practical step names.` }]
+                    }]
+                })
+            });
 
-            // Custom Roadmaps based on keywords
-            if (interest.includes("web") || interest.includes("frontend") || interest.includes("backend")) {
-                roadmapContent = `
-                    <div class="space-y-4">
-                        <p class="text-blue-400 font-semibold italic">Web Development Roadmap for ${branch}:</p>
-                        <div class="flex gap-3"><span class="text-blue-500 font-bold">01.</span> <p><b>HTML/CSS & JS:</b> Master the holy trinity of web. Focus on Responsive Design.</p></div>
-                        <div class="flex gap-3"><span class="text-blue-500 font-bold">02.</span> <p><b>Frameworks:</b> Learn React.js or Node.js to build dynamic web applications.</p></div>
-                        <div class="flex gap-3"><span class="text-blue-500 font-bold">03.</span> <p><b>Database:</b> Connect your app with MongoDB or PostgreSQL for data storage.</p></div>
-                        <div class="flex gap-3"><span class="text-blue-500 font-bold">04.</span> <p><b>Deployment:</b> Host your projects on Vercel or Netlify and update your Portfolio.</p></div>
-                    </div>`;
-            } else if (interest.includes("python") || interest.includes("ai") || interest.includes("ml")) {
-                roadmapContent = `
-                    <div class="space-y-4">
-                        <p class="text-emerald-400 font-semibold italic">AI & Python Roadmap for ${branch}:</p>
-                        <div class="flex gap-3"><span class="text-emerald-500 font-bold">01.</span> <p><b>Python Mastery:</b> Focus on Libraries like NumPy, Pandas, and Matplotlib.</p></div>
-                        <div class="flex gap-3"><span class="text-emerald-500 font-bold">02.</span> <p><b>ML Algorithms:</b> Understand Linear Regression, Decision Trees, and Clustering.</p></div>
-                        <div class="flex gap-3"><span class="text-emerald-500 font-bold">03.</span> <p><b>Deep Learning:</b> Explore Neural Networks using TensorFlow or PyTorch.</p></div>
-                        <div class="flex gap-3"><span class="text-emerald-500 font-bold">04.</span> <p><b>Project:</b> Build a Predictor App or a Chatbot and host it on Streamlit.</p></div>
-                    </div>`;
-            } else if (interest.includes("cyber") || interest.includes("security") || interest.includes("hacking")) {
-                roadmapContent = `
-                    <div class="space-y-4">
-                        <p class="text-red-400 font-semibold italic">Cyber Security Roadmap for ${branch}:</p>
-                        <div class="flex gap-3"><span class="text-red-500 font-bold">01.</span> <p><b>Networking:</b> Master TCP/IP, DNS, and HTTP protocols deeply.</p></div>
-                        <div class="flex gap-3"><span class="text-red-500 font-bold">02.</span> <p><b>Linux & Tools:</b> Learn Kali Linux, Nmap, and Wireshark for scanning.</p></div>
-                        <div class="flex gap-3"><span class="text-red-500 font-bold">03.</span> <p><b>Web Security:</b> Study OWASP Top 10 vulnerabilities like SQL Injection.</p></div>
-                        <div class="flex gap-3"><span class="text-red-500 font-bold">04.</span> <p><b>Certification:</b> Prepare for CompTIA Security+ or CEH fundamentals.</p></div>
-                    </div>`;
+            const data = await response.json();
+            
+            // Check if successful
+            if (data.candidates) {
+                const aiResponse = data.candidates[0].content.parts[0].text;
+                outputSection.classList.remove('hidden');
+                roadmapContainer.innerHTML = `<div class="whitespace-pre-wrap text-blue-100">${aiResponse.replace(/\*/g, '•')}</div>`;
             } else {
-                // Default Roadmap for any other interest
-                roadmapContent = `
-                    <div class="space-y-4">
-                        <p class="text-blue-400 font-semibold italic">Career Roadmap for ${interest}:</p>
-                        <div class="flex gap-3"><span class="text-blue-500 font-bold">01.</span> <p><b>Foundations:</b> Master the core concepts and theory of ${interest}.</p></div>
-                        <div class="flex gap-3"><span class="text-blue-500 font-bold">02.</span> <p><b>Practical Tools:</b> Learn the most popular software/tools used in this field.</p></div>
-                        <div class="flex gap-3"><span class="text-blue-500 font-bold">03.</span> <p><b>Certifications:</b> Complete a specialized course to validate your skills.</p></div>
-                        <div class="flex gap-3"><span class="text-blue-500 font-bold">04.</span> <p><b>Job Readiness:</b> Build a niche project and start networking on LinkedIn.</p></div>
-                    </div>`;
+                // Agar API limit ya error ho, tabhi "Backup" dikhao
+                throw new Error("API Offline");
             }
 
-            roadmapContainer.innerHTML = roadmapContent;
+        } catch (error) {
+            // Error hone par hi generic dikhao taki presentation kharab na ho
+            outputSection.classList.remove('hidden');
+            roadmapContainer.innerHTML = `<p><b>Step 1:</b> Master ${interest} Basics.<br><b>Step 2:</b> Build Projects.<br><b>Step 3:</b> Certifications.<br><b>Step 4:</b> Internships.</p>`;
+        } finally {
             button.innerText = "Generate Roadmap";
             button.disabled = false;
-            outputSection.scrollIntoView({ behavior: 'smooth' });
-        }, 1200);
+        }
     });
     </script>
+    
     
 </body>
 </html>
