@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathFinder AI | B.Tech Navigator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; 
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #60a5fa, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="text-slate-200 selection:bg-blue-500/30">
+
+    <nav class="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white italic">P</div>
+            <span class="text-xl font-bold tracking-tight">PathFinder<span class="text-blue-500">.AI</span></span>
+        </div>
+        <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-400">
+            <a href="index.html" class="text-white">Solution</a>
+            <a href="part2.html" class="hover:text-white transition">Roadmap</a>
+            <a href="part3.html" class="hover:text-white transition">Pitch</a>
+        </div>
+        <a href="part2.html" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 rounded-full text-sm font-semibold transition border border-slate-700">
+            Try Demo
+        </a>
+    </nav>
+
+    <header class="max-w-7xl mx-auto px-6 pt-20 pb-16 text-center">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">
+            <span>✨ 2026 Innovation Project</span>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
+            Navigate your B.Tech <br>
+            <span class="gradient-text text-6xl md:text-8xl">with AI Intelligence.</span>
+        </h1>
+        <p class="max-w-2xl mx-auto text-slate-400 text-lg md:text-xl leading-relaxed mb-12">
+            Stop following generic paths. We analyze industry trends and academic requirements to build your personalized 4-year technical roadmap.
+        </p>
+        
+        <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+            <a href="part2.html" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg shadow-blue-500/20">
+                Generate My Roadmap
+            </a>
+            <a href="part3.html" class="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-lg transition border border-slate-800">
+                View Startup Pitch
+            </a>
+        </div>
+    </header>
+
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="glass-card p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Goal Identification</h3>
+                <p class="text-slate-400 leading-relaxed">Identify real-world problems in the AIML domain and solve them with code.</p>
+            </div>
+            <div class="glass-card p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Dynamic Web Design</h3>
+                <p class="text-slate-400 leading-relaxed">A focus on high-end UI/UX, responsiveness, and functional creativity.</p>
+            </div>
+            <div class="glass-card p-8 rounded-3xl">
+                <div class="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Startup Pitch Ready</h3>
+                <p class="text-slate-400 leading-relaxed">Ready to present using a modern PPT structure and direct live website demo.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="mt-auto border-t border-slate-900 py-10 text-center">
+        <p class="text-slate-500 text-sm italic">
+            Developed by Student AM1267 | Zeal College of Engineering
+        </p>
+    </footer>
+
+</body>
+</html>

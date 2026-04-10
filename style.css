@@ -1,0 +1,59 @@
+
+/* Custom properties for a consistent theme */
+:root {
+    --primary-blue: #3b82f6;
+    --primary-purple: #a855f7;
+    --bg-dark: #020617;
+}
+
+/* 1. Smooth Scrolling for the whole site */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 2. Custom Scrollbar (Professional Touch) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 10px;
+    border: 2px solid var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-blue);
+}
+
+/* 3. Text Selection Color */
+::selection {
+    background: rgba(59, 130, 246, 0.3);
+    color: #fff;
+}
+
+/* 4. Global Transitions for all links and buttons */
+a, button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 5. Custom Animation for the 'Glowing' effect on cards */
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+    100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.2); }
+}
+
+.pitch-card:hover, .step-card:hover {
+    animation: glow 2s infinite;
+}
+
+/* 6. Fix for older mobile browsers */
+body {
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+}
