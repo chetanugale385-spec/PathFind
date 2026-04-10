@@ -3,79 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PathFind AI - Smart Roadmap</title>
+    <title>PathFind AI | Universal Career Architect</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* Modern glowing pulse for background highlights */
-        @keyframes pulse-bg {
-            0%, 100% { background-color: rgba(30, 41, 59, 0.5); }
-            50% { background-color: rgba(30, 41, 59, 0.8); }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at top right, #1e293b, #020617);
+            color: #f8fafc;
         }
-        .animate-loading { animation: pulse-bg 2s infinite; }
-        
-        /* Modern Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-        /* Roadmap content basic formatting */
-        .roadmap-content ul { list-style-type: disc; margin-left: 20px; color: #cbd5e1; }
-        .roadmap-content li { margin-bottom: 8px; }
-        .roadmap-content h2, .roadmap-content h3 { font-weight: 700; color: #fff; margin-top: 20px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .glass { 
+            background: rgba(15, 23, 42, 0.7); 
+            backdrop-filter: blur(14px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        .bento-card {
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .bento-card:hover {
+            transform: translateY(-8px);
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #3b82f6;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-[#0f172a] text-slate-200 font-sans min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
 
-    <header class="text-center py-6">
-        <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-cyan-300">PathFind AI</h1>
-        <p class="text-slate-500 text-[9px] mt-1 tracking-[0.3em] uppercase font-bold">ZCOER Student Project</p>
-    </header>
-
-    <main class="flex-grow flex flex-col md:flex-row gap-6 p-6 max-w-[1920px] mx-auto w-full">
-        
-        <div class="md:w-1/3 flex flex-col gap-5 self-start">
-            <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50 shadow-inner">
-                <label class="block text-[10px] font-bold text-blue-400 mb-2 uppercase tracking-widest">Select Branch</label>
-                <select id="branch" class="w-full bg-transparent outline-none text-sm font-semibold appearance-none">
-                    <option value="AIML" class="bg-slate-900">B.Tech AIML</option>
-                    <option value="Computer" class="bg-slate-900">Computer Engineering</option>
-                    <option value="IT" class="bg-slate-900">Information Technology</option>
-                    <option value="ENTC" class="bg-slate-900">E&TC Engineering</option>
-                </select>
+    <nav class="p-6 flex justify-between items-center glass sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center font-black text-white italic">P</div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tighter gradient-text">PathFind AI</h1>
+                <p class="text-[7px] tracking-[0.4em] uppercase text-slate-500 font-bold">Universal Engineering Edition</p>
             </div>
-
-            <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50 shadow-inner">
-                <label class="block text-[10px] font-bold text-blue-400 mb-2 uppercase tracking-widest">Your Core Interest</label>
-                <input type="text" id="interest" placeholder="e.g. Data Science, Web Dev" 
-                       class="w-full bg-transparent outline-none text-sm placeholder:text-slate-600 font-semibold">
-            </div>
-
-            <button id="generate-btn" class="w-full py-5 bg-gradient-to-br from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-2xl font-black text-white shadow-xl shadow-blue-900/40 transition-all active:scale-[0.98]">
-                GENERATE ROADMAP
-            </button>
         </div>
+        <div class="hidden sm:block">
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] border border-white/10 px-4 py-2 rounded-full">ZCOER Student Portal</span>
+        </div>
+    </nav>
 
-        <div id="output-section" class="md:w-2/3 flex-grow hidden">
-            <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
-                <div class="w-3 h-3 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_12px_rgba(34,211,238,0.8)]"></div>
-                <h2 class="text-xl font-bold text-white uppercase tracking-tight">AI Generated Path</h2>
+    <main class="flex-grow flex flex-col lg:flex-row p-6 gap-8 w-full max-w-[1600px] mx-auto">
+        
+        <aside class="lg:w-[350px] space-y-6 flex-shrink-0">
+            <div class="glass p-8 rounded-[2.5rem] shadow-2xl space-y-8">
+                <div>
+                    <label class="block text-[10px] font-black text-blue-400 uppercase mb-3 tracking-widest">Select Your Branch</label>
+                    <select id="branch" class="w-full bg-slate-900/80 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:ring-2 ring-blue-500 transition-all text-slate-200">
+                        <optgroup label="Core Engineering" class="bg-slate-900">
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Electrical Engineering">Electrical Engineering</option>
+                            <option value="E&TC Engineering">E&TC Engineering</option>
+                        </optgroup>
+                        <optgroup label="Computing & Tech" class="bg-slate-900">
+                            <option value="AIML" selected>B.Tech AIML</option>
+                            <option value="Computer Engineering">Computer Engineering</option>
+                            <option value="IT Engineering">Information Technology</option>
+                            <option value="Cybersecurity">Cybersecurity</option>
+                            <option value="Data Science">Data Science</option>
+                        </optgroup>
+                        <optgroup label="Modern Fields" class="bg-slate-900">
+                            <option value="Robotics & Automation">Robotics & Automation</option>
+                            <option value="Chemical Engineering">Chemical Engineering</option>
+                            <option value="Automobile Engineering">Automobile Engineering</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-blue-400 uppercase mb-3 tracking-widest">Your Core Interest</label>
+                    <input type="text" id="interest" placeholder="e.g. AI, EV, Structural Design" 
+                           class="w-full bg-slate-900/80 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:ring-2 ring-blue-500 transition-all placeholder:text-slate-700">
+                </div>
+
+                <button id="generate-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-sm tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95 uppercase flex items-center justify-center gap-3">
+                    Generate Roadmap 🚀
+                </button>
             </div>
             
-            <div id="roadmap-container" class="space-y-4">
+            <div class="glass p-5 rounded-[1.5rem] border-dashed border-white/10 text-center">
+                <p class="text-[10px] text-slate-500 font-bold uppercase">System: Stable Connection</p>
+            </div>
+        </aside>
+
+        <section id="output-section" class="flex-grow hidden animate-fade-in">
+            <div class="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
+                <h2 class="text-2xl font-extrabold italic tracking-tight">Career Architecture</h2>
+                <div class="w-3 h-3 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_15px_#22d3ee]"></div>
+            </div>
+            
+            <div id="roadmap-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 </div>
-        </div>
+        </section>
     </main>
 
-    <footer class="text-center py-6 mt-12 bg-slate-900/50 border-t border-slate-800/80">
-        <p class="text-[9px] text-slate-600 uppercase tracking-[0.2em] font-medium">DESIGNED & BUILT BY</p>
-        <span class="text-sm font-black text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 to-blue-400 tracking-tight px-3 py-1 bg-blue-500/10 rounded-full inline-block mt-2">
-            CHETAN UGALE
-        </span>
+    <footer class="p-8 text-center glass border-t border-white/5 mt-auto">
+        <p class="text-[9px] text-slate-500 uppercase tracking-[0.4em] font-black mb-4">Architected & Engineered By</p>
+        <div class="bg-gradient-to-r from-blue-600 to-cyan-500 p-[1.5px] rounded-full inline-block">
+            <div class="bg-[#020617] px-8 py-2 rounded-full">
+                <span class="text-xs font-black tracking-widest uppercase italic gradient-text">
+                    Chetan Rameshwar Ugale
+                </span>
+            </div>
+        </div>
     </footer>
 
     <script>
-        // CRITICAL: Robust Vercel Backend URL
-        const API_URL = "https://path-find-one.vercel.app/generate"; 
+        const API_URL = "https://path-find-one.vercel.app/generate";
 
         document.getElementById('generate-btn').addEventListener('click', async () => {
             const branch = document.getElementById('branch').value;
@@ -84,80 +128,45 @@
             const output = document.getElementById('output-section');
             const container = document.getElementById('roadmap-container');
 
-            if (!interest.trim()) { 
-                alert("Bhai, interest toh dalo!"); 
-                return; 
-            }
+            if (!interest.trim()) return alert("Interest likho bhai!");
 
-            // Start Loading Animation
-            btn.innerText = "PROCESSING...";
             btn.disabled = true;
+            btn.innerHTML = `PROCESSING...`;
             output.classList.remove('hidden');
-            container.innerHTML = `
-                <div class="p-8 bg-slate-800/30 border border-slate-700/50 rounded-3xl animate-loading flex-grow h-[400px]">
-                    <div class="h-3 bg-slate-700 rounded-full w-3/4 mb-5 animate-pulse"></div>
-                    <div class="h-3 bg-slate-700 rounded-full w-full mb-5 animate-pulse"></div>
-                    <div class="h-3 bg-slate-700 rounded-full w-1/2 animate-pulse"></div>
-                </div>
-            `;
+            container.innerHTML = `<div class="col-span-full py-24 text-center text-slate-500 font-bold tracking-[0.5em] animate-pulse">ANALYZING BRANCH DATA...</div>`;
 
             try {
-                // Fetch call with strong CORS handling
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    mode: 'cors', // Force CORS mode for cross-domain request
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        prompt: `Provide a detailed 4-year career roadmap for a B.Tech ${branch} student who is interested in ${interest}. Include major milestones, core skills, and 3 project ideas. Format with bullet points.` 
+                        prompt: `Act as a career expert. Create a professional 4-year roadmap for B.Tech ${branch} specializing in ${interest}. Divide it into YEAR 1, YEAR 2, YEAR 3, YEAR 4. For each year, give 3 bullet points of subjects and 1 project idea. Format: Use 'YEAR_X:' as a hard separator.` 
                     })
                 });
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || "Backend error.");
-                }
-
                 const data = await response.json();
-
+                
                 if (data.roadmap) {
-                    // Modern Formatting: Clean and Readable
-                    const formattedRoadmap = data.roadmap
-                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-400 font-bold">$1</strong>') // Cyan for bold
-                        .replace(/\n/g, '<br>') // Correct line breaks
-                        .replace(/•/g, '<span class="text-blue-500 mr-2">●</span>'); // Consistent dots
-
-                    // Success View: Uses blur and depth
-                    container.innerHTML = `
-                        <div class="p-6 bg-slate-800/60 border border-slate-700 rounded-3xl shadow-2xl backdrop-blur-md">
-                            <div class="text-slate-300 roadmap-content font-medium text-sm leading-relaxed max-h-[600px] overflow-y-auto pr-2 custom-scroll">
-                                ${formattedRoadmap}
+                    // Logic to handle different model naming styles from backend
+                    const sections = data.roadmap.split(/YEAR_\d:|YEAR \d:|Year \d:/i).filter(s => s.trim().length > 10).slice(0, 4);
+                    
+                    container.innerHTML = sections.map((text, i) => `
+                        <div class="bento-card glass p-8 rounded-[2.5rem]">
+                            <div class="flex justify-between items-center mb-5">
+                                <span class="text-blue-400 font-black text-[10px] uppercase tracking-widest">Phase 0${i+1}</span>
+                                <div class="text-slate-600 font-black text-xl italic">Y${i+1}</div>
+                            </div>
+                            <div class="text-slate-300 text-sm leading-relaxed space-y-2">
+                                ${text.replace(/\*/g, '•').replace(/\n/g, '<br>')}
                             </div>
                         </div>
-                        <div class="mt-4 bg-cyan-500/10 border border-cyan-500/20 p-3 rounded-2xl text-center">
-                            <span class="text-cyan-400 text-[9px] font-black uppercase tracking-[0.2em]">Live Analysis from Gemini AI</span>
-                        </div>
-                    `;
-                    // Smooth scroll to the result section on mobile
-                    window.scrollTo({ top: output.offsetTop - 20, behavior: 'smooth' });
-                } else {
-                    throw new Error("Empty AI response.");
+                    `).join('');
                 }
             } catch (err) {
-                // Error State
-                container.innerHTML = `
-                    <div class="p-6 bg-red-900/10 border border-red-500/20 rounded-3xl text-center flex-grow">
-                        <p class="text-red-400 text-xs font-bold mb-2 uppercase">Backend Error</p>
-                        <p class="text-slate-500 text-[10px] mb-4">${err.message || 'Is your Vercel backend live?'}</p>
-                        <button onclick="location.reload()" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-300 text-[10px] rounded-lg uppercase font-bold tracking-widest transition-colors">Retry Connection</button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="col-span-full text-red-500 text-center py-20 font-bold">BACKEND ERROR: MODEL NOT FOUND OR QUOTA EXCEEDED</div>`;
             } finally {
-                // Reset Button State
-                btn.innerText = "GENERATE ROADMAP";
                 btn.disabled = false;
+                btn.innerHTML = `Generate Roadmap 🚀`;
             }
         });
     </script>
