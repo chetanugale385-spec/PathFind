@@ -3,49 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PathFind AI | ZCOER Pune</title>
+    <title>PathFind - AI Career Roadmap</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob { animation: blob 7s infinite; }
-    </style>
 </head>
-<body class="bg-slate-950 text-white font-sans min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-900 text-white font-sans">
 
-    <div class="fixed top-0 -left-4 w-72 h-72 bg-blue-600 rounded-full filter blur-3xl opacity-10 animate-blob"></div>
-    <div class="fixed bottom-0 -right-4 w-72 h-72 bg-purple-600 rounded-full filter blur-3xl opacity-10 animate-blob" style="animation-delay: 2s;"></div>
-
-    <div class="relative w-full max-w-lg bg-slate-900/80 backdrop-blur-md border border-slate-800 p-8 rounded-3xl shadow-2xl">
+    <div class="max-w-md mx-auto p-6">
+        <h1 class="text-3-xl font-bold text-center mb-8 text-blue-400">PathFind AI</h1>
         
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-extrabold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-                PathFind AI
-            </h1>
-            <p class="text-slate-400 mt-2 text-sm tracking-wide uppercase">AI Career Roadmap Generator</p>
-        </div>
-
-        <div class="space-y-5">
+        <div class="space-y-4">
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 mb-2 ml-1">SELECT BRANCH</label>
-                <select id="branch" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none focus:border-blue-500">
-                    <option value="AIML">AI & Machine Learning</option>
-                    <option value="Data Science">Data Science</option>
-                    <option value="Cyber Security">Cyber Security</option>
+                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Your Branch</label>
+                <select id="branch" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none focus:border-blue-500 text-sm">
+                    <option value="AIML">B.Tech AIML</option>
+                    <option value="Computer">Computer Engineering</option>
+                    <option value="IT">Information Technology</option>
+                    <option value="ENTC">E&TC Engineering</option>
                 </select>
             </div>
 
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 mb-2 ml-1">FIELD OF INTEREST</label>
-                <input type="text" id="interest" placeholder="e.g. Web Development" 
-                       class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none focus:border-blue-500">
+                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Field of Interest</label>
+                <input type="text" id="interest" placeholder="e.g. Web Development, Cyber Security" 
+                       class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none focus:border-blue-500 text-sm">
             </div>
 
-            <button id="generate-btn" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+            <button id="generate-btn" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold shadow-lg transition-all active:scale-95">
                 Generate Roadmap
             </button>
         </div>
@@ -55,64 +38,77 @@
                 <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                 <h2 class="text-lg font-bold text-slate-200">Personalized Roadmap</h2>
             </div>
-            <div id="roadmap-container" class="p-5 bg-slate-800/50 border border-slate-700 rounded-2xl text-slate-300 leading-relaxed text-sm">
+            
+            <div id="roadmap-container" class="space-y-4">
                 </div>
         </div>
 
-        <p class="text-center text-slate-600 text-[9px] mt-8 tracking-widest uppercase">ZCOER Pune • Project by Chetan</p>
+        <p class="text-center text-slate-600 text-[10px] mt-12 tracking-widest uppercase">
+            ZCOER Pune • Project by Chetan
+        </p>
     </div>
 
     <script>
-    const API_URL = "https://pathfind.onrender.com/generate"; 
+        const API_URL = "https://pathfind.onrender.com/generate"; 
 
-    document.getElementById('generate-btn').addEventListener('click', async () => {
-        const branch = document.getElementById('branch').value;
-        const interest = document.getElementById('interest').value;
-        const button = document.getElementById('generate-btn');
-        const outputSection = document.getElementById('output-section');
-        const roadmapContainer = document.getElementById('roadmap-container');
+        document.getElementById('generate-btn').addEventListener('click', async () => {
+            const branch = document.getElementById('branch').value;
+            const interest = document.getElementById('interest').value;
+            const button = document.getElementById('generate-btn');
+            const outputSection = document.getElementById('output-section');
+            const roadmapContainer = document.getElementById('roadmap-container');
 
-        if (!interest.trim()) { alert("Please enter interest!"); return; }
-
-        button.innerText = "Connecting to Render Backend...";
-        button.disabled = true;
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: `B.Tech ${branch} student interested in ${interest}` })
-            });
-
-            const data = await response.json();
-
-            if (data.roadmap) {
-                outputSection.classList.remove('hidden');
-                
-                // AI Response ko format karna
-                let rawText = data.roadmap;
-                let sections = rawText.split(/\d\.|MISTAKES/i); // Text ko split karne ki koshish
-
-                roadmapContainer.innerHTML = `
-                    <div class="space-y-6">
-                        <div class="p-4 bg-blue-900/20 border border-blue-800 rounded-xl">
-                            <h3 class="text-blue-400 font-bold mb-3 uppercase text-xs">PathFind Journey Flowchart</h3>
-                            <div class="whitespace-pre-wrap text-sm leading-relaxed">${rawText.replace(/\*/g, '•')}</div>
-                        </div>
-                    </div>
-                `;
+            if (!interest.trim()) { 
+                alert("Please enter an interest!"); 
+                return; 
             }
-        } catch (error) {
-            alert("Server is warming up! Please wait 20 seconds.");
-        } finally {
-            button.innerText = "Generate Roadmap";
-            button.disabled = false;
-        }
-    });
+
+            button.innerText = "Connecting to AI Backend...";
+            button.disabled = true;
+            outputSection.classList.add('hidden');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        // FIXED: Using backticks for template literals
+                        prompt: `B.Tech ${branch} student interested in ${interest}` 
+                    })
+                });
+
+                if (!response.ok) throw new Error("Backend offline or Error 500");
+
+                const data = await response.json();
+
+                if (data.roadmap) {
+                    outputSection.classList.remove('hidden');
+                    
+                    // Formatting the AI response
+                    let aiText = data.roadmap;
+                    
+                    roadmapContainer.innerHTML = `
+                        <div class="p-5 bg-slate-800/50 border border-slate-700 rounded-2xl shadow-inner">
+                            <h3 class="text-blue-400 font-bold mb-3 uppercase text-[10px]">Step-by-Step Journey</h3>
+                            <div class="whitespace-pre-wrap text-sm text-slate-300 leading-relaxed font-mono">
+                                ${aiText.replace(/\*/g, '•')}
+                            </div>
+                        </div>
+                        <div class="p-4 bg-red-900/10 border border-red-900/20 rounded-xl">
+                            <p class="text-red-400 text-xs italic">Note: Follow this roadmap consistently for best results.</p>
+                        </div>
+                    `;
+                    
+                    outputSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Server is warming up (Cold Start). Please wait 30 seconds and try again!");
+            } finally {
+                button.innerText = "Generate Roadmap";
+                button.disabled = false;
+            }
+        });
     </script>
-    
-    
-    
-    
 </body>
 </html>
