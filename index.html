@@ -63,9 +63,7 @@
     </div>
 
     <script>
-    // 1. Apni API Key dhyan se check karke yahan dalo
-    const API_KEY = "AIzaSyA5nFFYWKPDRYZUtMY4JPqAzNPCxjqXSJY"; 
-    const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    const API_URL = "https://pathfind.onrender.com/generate"; 
 
     document.getElementById('generate-btn').addEventListener('click', async () => {
         const branch = document.getElementById('branch').value;
@@ -74,44 +72,38 @@
         const outputSection = document.getElementById('output-section');
         const roadmapContainer = document.getElementById('roadmap-container');
 
-        if (!interest.trim()) return;
+        if (!interest.trim()) { alert("Interest fill karein!"); return; }
 
-        button.innerText = "AI is thinking...";
+        button.innerText = "Connecting to Render...";
         button.disabled = true;
 
         try {
-            const response = await fetch(URL, {
+            const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: `Generate a unique, detailed 4-step professional career roadmap for a B.Tech ${branch} student specializing in ${interest}. Give practical step names.` }]
-                    }]
-                })
+                body: JSON.stringify({ prompt: branch + " " + interest })
             });
 
             const data = await response.json();
-            
-            // Check if successful
-            if (data.candidates) {
-                const aiResponse = data.candidates[0].content.parts[0].text;
+
+            if (data.roadmap) {
                 outputSection.classList.remove('hidden');
-                roadmapContainer.innerHTML = `<div class="whitespace-pre-wrap text-blue-100">${aiResponse.replace(/\*/g, '•')}</div>`;
+                // AI Response ko formatting ke saath dikhana
+                roadmapContainer.innerHTML = `<div class="whitespace-pre-wrap">${data.roadmap.replace(/\*/g, '•')}</div>`;
             } else {
-                // Agar API limit ya error ho, tabhi "Backup" dikhao
-                throw new Error("API Offline");
+                throw new Error("Backend Error");
             }
 
         } catch (error) {
-            // Error hone par hi generic dikhao taki presentation kharab na ho
-            outputSection.classList.remove('hidden');
-            roadmapContainer.innerHTML = `<p><b>Step 1:</b> Master ${interest} Basics.<br><b>Step 2:</b> Build Projects.<br><b>Step 3:</b> Certifications.<br><b>Step 4:</b> Internships.</p>`;
+            console.error(error);
+            alert("Render abhi jaag raha hai (Cold Start). 30 seconds baad phir try karein!");
         } finally {
             button.innerText = "Generate Roadmap";
             button.disabled = false;
         }
     });
     </script>
+    
     
     
 </body>
