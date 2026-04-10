@@ -5,16 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PathFind - AI Career Roadmap</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse-bg {
+            0%, 100% { background-color: rgba(30, 41, 59, 0.5); }
+            50% { background-color: rgba(30, 41, 59, 0.8); }
+        }
+        .animate-loading { animation: pulse-bg 2s infinite; }
+    </style>
 </head>
-<body class="bg-slate-900 text-white font-sans">
+<body class="bg-slate-900 text-white font-sans min-h-screen">
 
     <div class="max-w-md mx-auto p-6">
-        <h1 class="text-3-xl font-bold text-center mb-8 text-blue-400">PathFind AI</h1>
+        <header class="text-center mb-10 pt-4">
+            <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">PathFind AI</h1>
+            <p class="text-slate-400 text-xs mt-2 tracking-widest uppercase">Smart Career Navigation</p>
+        </header>
         
-        <div class="space-y-4">
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Your Branch</label>
-                <select id="branch" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none focus:border-blue-500 text-sm">
+        <div class="space-y-6">
+            <div class="bg-slate-800/40 p-1 rounded-2xl border border-slate-700">
+                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-4 mt-2 uppercase">Select Your Branch</label>
+                <select id="branch" class="w-full p-4 bg-transparent outline-none text-sm font-medium">
                     <option value="AIML">B.Tech AIML</option>
                     <option value="Computer">Computer Engineering</option>
                     <option value="IT">Information Technology</option>
@@ -22,85 +32,103 @@
                 </select>
             </div>
 
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Field of Interest</label>
-                <input type="text" id="interest" placeholder="e.g. Web Development, Cyber Security" 
-                       class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none focus:border-blue-500 text-sm">
+            <div class="bg-slate-800/40 p-1 rounded-2xl border border-slate-700">
+                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-4 mt-2 uppercase">What is your Interest?</label>
+                <input type="text" id="interest" placeholder="e.g. Web Dev, AI Research" 
+                       class="w-full p-4 bg-transparent outline-none text-sm placeholder:text-slate-600">
             </div>
 
-            <button id="generate-btn" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold shadow-lg transition-all active:scale-95">
-                Generate Roadmap
+            <button id="generate-btn" class="w-full py-5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 rounded-2xl font-bold shadow-xl shadow-blue-900/20 transition-all active:scale-95">
+                Generate AI Roadmap
             </button>
         </div>
 
-        <div id="output-section" class="mt-8 hidden">
-            <div class="flex items-center gap-2 mb-4 border-t border-slate-800 pt-6">
-                <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                <h2 class="text-lg font-bold text-slate-200">Personalized Roadmap</h2>
+        <div id="output-section" class="mt-10 hidden">
+            <div class="flex items-center gap-3 mb-6 border-t border-slate-800 pt-8">
+                <div class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)]"></div>
+                <h2 class="text-xl font-bold text-slate-100 tracking-tight">Your Custom Path</h2>
             </div>
             
-            <div id="roadmap-container" class="space-y-4">
+            <div id="roadmap-container">
                 </div>
         </div>
 
-        <p class="text-center text-slate-600 text-[10px] mt-12 tracking-widest uppercase">
-            ZCOER Pune • Project by Chetan
-        </p>
+        <footer class="text-center text-slate-600 text-[10px] mt-16 tracking-[0.2em] uppercase pb-8">
+            ZCOER Pune • Developed by Chetan Ugale
+        </footer>
     </div>
-<script>
-    const API_URL = "https://pathfind.onrender.com/generate"; 
 
-    document.getElementById('generate-btn').addEventListener('click', async () => {
-        const branch = document.getElementById('branch').value;
-        const interest = document.getElementById('interest').value;
-        const button = document.getElementById('generate-btn');
-        const outputSection = document.getElementById('output-section');
-        const roadmapContainer = document.getElementById('roadmap-container');
+    <script>
+        // UPDATED: Using your new Vercel URL
+        const API_URL = "https://path-find-one.vercel.app/generate"; 
 
-        if (!interest.trim()) { alert("Interest empty hai!"); return; }
+        document.getElementById('generate-btn').addEventListener('click', async () => {
+            const branch = document.getElementById('branch').value;
+            const interest = document.getElementById('interest').value;
+            const button = document.getElementById('generate-btn');
+            const outputSection = document.getElementById('output-section');
+            const roadmapContainer = document.getElementById('roadmap-container');
 
-        button.innerText = "Connecting...";
-        button.disabled = true;
-
-        try {
-            // Mobile par request check karne ke liye timeout
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 25000); // 25s timeout
-
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    prompt: `B.Tech ${branch} student interested in ${interest}` 
-                }),
-                signal: controller.signal
-            });
-
-            clearTimeout(id);
-
-            if (!response.ok) {
-                const errData = await response.json();
-                alert("Backend Error: " + (errData.message || response.status));
-                return;
+            if (!interest.trim()) { 
+                alert("Please type an interest first!"); 
+                return; 
             }
 
-            const data = await response.json();
-            if (data.roadmap) {
-                outputSection.classList.remove('hidden');
-                roadmapContainer.innerHTML = `<div class="p-4 bg-slate-800 rounded-xl whitespace-pre-wrap text-sm">${data.roadmap.replace(/\*/g, '•')}</div>`;
-                window.scrollTo(0, document.body.scrollHeight);
-            }
+            // UI State - Loading
+            button.innerText = "Analyzing & Generating...";
+            button.disabled = true;
+            outputSection.classList.remove('hidden');
+            roadmapContainer.innerHTML = `
+                <div class="p-6 bg-slate-800/50 border border-slate-700 rounded-3xl animate-loading">
+                    <div class="h-4 bg-slate-700 rounded-full w-3/4 mb-4 animate-pulse"></div>
+                    <div class="h-4 bg-slate-700 rounded-full w-full mb-4 animate-pulse"></div>
+                    <div class="h-4 bg-slate-700 rounded-full w-2/3 animate-pulse"></div>
+                </div>
+            `;
 
-        } catch (error) {
-            // Ye alert mobile par sabse kaam aayega
-            alert("Connection Failed!\n1. Check if https://pathfind.onrender.com is opening in browser.\n2. Render might be starting up (Wait 30s).\n3. Error: " + error.message);
-        } finally {
-            button.innerText = "Generate Roadmap";
-            button.disabled = false;
-        }
-    });
-</script>
-    
-    
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: `Provide a detailed 4-year career roadmap for a B.Tech ${branch} student who is interested in ${interest}. Include skills to learn and project ideas.` 
+                    })
+                });
+
+                if (!response.ok) throw new Error("Server response error");
+
+                const data = await response.json();
+
+                if (data.roadmap) {
+                    // Success UI
+                    roadmapContainer.innerHTML = `
+                        <div class="p-6 bg-slate-800/80 border border-slate-700 rounded-3xl shadow-2xl backdrop-blur-sm">
+                            <div class="prose prose-invert max-w-none">
+                                <p class="whitespace-pre-wrap text-slate-300 text-sm leading-relaxed font-sans">
+                                    ${data.roadmap.replace(/\*/g, '•')}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center">
+                            <p class="text-emerald-400 text-[10px] font-bold uppercase tracking-widest">Roadmap Ready! All the best for your journey.</p>
+                        </div>
+                    `;
+                    
+                    window.scrollTo({ top: outputSection.offsetTop - 20, behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error(error);
+                roadmapContainer.innerHTML = `
+                    <div class="p-6 bg-red-900/20 border border-red-900/30 rounded-3xl text-center">
+                        <p class="text-red-400 text-sm">Oops! Something went wrong. Please check if the backend is live or try again.</p>
+                        <button onclick="location.reload()" class="mt-4 text-xs underline text-red-300">Retry Connection</button>
+                    </div>
+                `;
+            } finally {
+                button.innerText = "Generate AI Roadmap";
+                button.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>
