@@ -1,4 +1,3 @@
-
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,10 +30,12 @@ async def generate_roadmap(request: UserRequest):
     if not GEMINI_KEY:
         raise HTTPException(status_code=500, detail="API Key missing")
     try:
-        # UPDATED: Using the exact model identifier
-        model = genai.GenerativeModel('models/gemini-1.5-flash') 
-        response = model.generate_content(f"Provide a clear 4-step roadmap for: {request.prompt}")
+        # CHANGE: Humne yahan model name ko simple "gemini-1.5-flash" rakha hai
+        model = genai.GenerativeModel('gemini-1.5-flash') 
+        response = model.generate_content(f"Provide a 4-step roadmap for: {request.prompt}")
         return {"roadmap": response.text}
     except Exception as e:
-        print(f"Error detail: {str(e)}")
+        # Isse aapko real error logs mein dikhega
+        print(f"ERROR: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+        
