@@ -4,38 +4,41 @@ from flask_cors import CORS
 import google.generativeai as genai
 
 app = Flask(__name__)
-# Sabse open CORS policy taaki browser error na de
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# API Key setup from Vercel Environment Variables
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
 @app.route('/')
 def home():
-    return "PathFind Backend is Live and Connected!"
+    return "PathFind Backend is Live!"
 
 @app.route('/generate', methods=['POST', 'OPTIONS'])
 def generate_roadmap():
-    # CORS handling for pre-flight requests
     if request.method == 'OPTIONS':
         return jsonify({"status": "ok"}), 200
         
     try:
         if not API_KEY:
-            return jsonify({"error": "API Key not found in Vercel settings"}), 500
+            return jsonify({"error": "API Key Missing"}), 500
 
-        # AI Configuration
         genai.configure(api_key=API_KEY)
         
-        # UPDATED MODEL NAME: Using 1.5-flash for speed and compatibility
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # AUTOMATIC MODEL SELECTION
+        # Ye code check karega ki tumhari library ke liye kaunsa model available hai
+        available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+        
+        # Agar flash ya pro milta hai toh wo use karo, warna list ka pehla model
+        selected_model = 'models/gemini-1.5-flash'
+        if 'models/gemini-1.5-flash' not in available_models:
+            if available_models:
+                selected_model = available_models[0]
+            else:
+                return jsonify({"error": "No Gemini models available for this API Key"}), 500
+
+        model = genai.GenerativeModel(selected_model)
         
         data = request.get_json()
-        if not data or 'prompt' not in data:
-            return jsonify({"error": "No prompt provided"}), 400
-
-        # AI Generation
-        response = model.generate_content(data.get('prompt'))
+        response = model.generate_content(data.get('prompt', 'career roadmap'))
         
         if response and response.text:
             return jsonify({"roadmap": response.text})
@@ -43,8 +46,5 @@ def generate_roadmap():
             return jsonify({"error": "AI response was empty"}), 500
 
     except Exception as e:
-        # Error logging for Vercel
-        print(f"Server Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
-# Vercel needs the 'app' object to run
+        
