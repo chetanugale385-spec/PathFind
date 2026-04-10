@@ -4,39 +4,40 @@ from flask_cors import CORS
 import google.generativeai as genai
 
 app = Flask(__name__)
-# CORS ko asaan banate hain taaki koi block na kare
-CORS(app, resources={r"/*": {"origins": "*"}})
+# Sabse important: Ye line har tarah ki request allow karegi
+CORS(app, supports_credentials=True)
 
-# API Key setup
+# API Key load
 API_KEY = os.environ.get("GEMINI_API_KEY")
-if API_KEY:
-    genai.configure(api_key=API_KEY)
 
 @app.route('/')
 def home():
-    return "PathFind Backend is Live!"
+    return "PathFind Backend is Live and Connected!"
 
 @app.route('/generate', methods=['POST', 'OPTIONS'])
 def generate_roadmap():
-    # CORS handling for preflight requests
+    # Pre-flight request handling
     if request.method == 'OPTIONS':
         return jsonify({"status": "ok"}), 200
         
     try:
-        data = request.json
-        prompt_text = data.get('prompt', 'Provide a career roadmap.')
+        if not API_KEY:
+            return jsonify({"error": "Missing API Key"}), 500
 
-        # Sabse stable model use karenge
+        genai.configure(api_key=API_KEY)
         model = genai.GenerativeModel('gemini-pro')
-        response = model.generate_content(prompt_text)
+        
+        data = request.get_json()
+        if not data or 'prompt' not in data:
+            return jsonify({"error": "No prompt provided"}), 400
 
+        response = model.generate_content(data.get('prompt'))
+        
         if response and response.text:
             return jsonify({"roadmap": response.text})
         else:
-            return jsonify({"error": "AI could not generate text"}), 500
+            return jsonify({"error": "AI response was empty"}), 500
 
     except Exception as e:
-        # Ye line logs mein error dikhayegi
-        print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
         
