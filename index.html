@@ -33,42 +33,69 @@
         </div>
     </div>
 
-    <script>
-        const API_URL = "https://pathfind.onrender.com/generate"; 
+<script>
+    // 1. Backend URL (Verify karein ki spelling sahi hai)
+    const API_URL = "https://pathfind.onrender.com/generate"; 
 
-        document.getElementById('generate-btn').addEventListener('click', async () => {
-            const branch = document.getElementById('branch').value;
-            const interest = document.getElementById('interest').value;
-            const button = document.getElementById('generate-btn');
-            const outputSection = document.getElementById('output-section');
-            const roadmapContainer = document.getElementById('roadmap-container');
+    document.getElementById('generate-btn').addEventListener('click', async () => {
+        const branch = document.getElementById('branch').value;
+        const interest = document.getElementById('interest').value;
+        const button = document.getElementById('generate-btn');
+        const outputSection = document.getElementById('output-section');
+        const roadmapContainer = document.getElementById('roadmap-container');
 
-            if (!interest) { alert("Please enter your interest!"); return; }
+        // Validation
+        if (!interest.trim()) {
+            alert("Bhai, pehle apna interest (e.g. Python) toh likho!");
+            return;
+        }
 
-            button.innerText = "AI is thinking...";
-            button.disabled = true;
+        // UI updates: Button disable aur loading state
+        button.innerText = "AI is generating roadmap...";
+        button.disabled = true;
+        outputSection.classList.add('hidden');
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: `B.Tech student in ${branch}. Interested in ${interest}.` })
-                });
+        try {
+            // 2. Fetch call with timeout logic
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    prompt: `B.Tech ${branch} student. Focus on ${interest}.` 
+                })
+            });
 
-                if (!response.ok) throw new Error("Server not responding");
-
-                const data = await response.json();
-                outputSection.classList.remove('hidden');
-                roadmapContainer.innerText = data.roadmap;
-
-            } catch (error) {
-                alert("Please wait 1 minute and try again. Server is waking up.");
-                console.error(error);
-            } finally {
-                button.innerText = "Generate Roadmap";
-                button.disabled = false;
+            // Agar server 404 ya 500 de
+            if (!response.ok) {
+                throw new Error(`Server Error: ${response.status}`);
             }
-        });
-    </script>
-</body>
-</html>
+
+            const data = await response.json();
+
+            // 3. Display Result
+            if (data.roadmap) {
+                outputSection.classList.remove('hidden');
+                roadmapContainer.innerHTML = `
+                    <div class="p-5 bg-slate-900 border-l-4 border-blue-500 rounded-r-xl text-slate-200">
+                        <p class="whitespace-pre-wrap leading-relaxed text-sm md:text-base">
+                            ${data.roadmap}
+                        </p>
+                    </div>
+                `;
+            } else {
+                throw new Error("Empty roadmap received");
+            }
+
+        } catch (error) {
+            console.error("Error details:", error);
+            alert("Server abhi jaag raha hai (Waking up). Kripya 20-30 seconds baad phir se button dabayein.");
+        } finally {
+            // Button wapas enable karna
+            button.innerText = "Generate My Roadmap";
+            button.disabled = false;
+        }
+    });
+</script>
+    
