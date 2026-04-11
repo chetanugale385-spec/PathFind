@@ -119,56 +119,81 @@
     </footer>
 
     <script>
-        const API_URL = "https://path-find-one.vercel.app/generate";
+    const API_URL = "https://path-find-one.vercel.app/generate";
 
-        document.getElementById('generate-btn').addEventListener('click', async () => {
-            const branch = document.getElementById('branch').value;
-            const interest = document.getElementById('interest').value;
-            const btn = document.getElementById('generate-btn');
-            const output = document.getElementById('output-section');
-            const container = document.getElementById('roadmap-container');
+    document.getElementById('generate-btn').addEventListener('click', async () => {
+        const branch = document.getElementById('branch').value;
+        const interest = document.getElementById('interest').value;
+        const btn = document.getElementById('generate-btn');
+        const output = document.getElementById('output-section');
+        const container = document.getElementById('roadmap-container');
 
-            if (!interest.trim()) return alert("Interest likho bhai!");
+        if (!interest.trim()) return alert("Please enter your interest!");
 
-            btn.disabled = true;
-            btn.innerHTML = `PROCESSING...`;
-            output.classList.remove('hidden');
-            container.innerHTML = `<div class="col-span-full py-24 text-center text-slate-500 font-bold tracking-[0.5em] animate-pulse">ANALYZING BRANCH DATA...</div>`;
+        // Reset UI
+        btn.disabled = true;
+        btn.innerHTML = `<span class="animate-spin">◌</span> ANALYZING...`;
+        output.classList.remove('hidden');
+        container.innerHTML = `<div class="col-span-full py-20 text-center animate-pulse text-blue-400 font-bold tracking-widest uppercase text-xs">Connecting to Gemini AI Engine...</div>`;
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        prompt: `Act as a career expert. Create a professional 4-year roadmap for B.Tech ${branch} specializing in ${interest}. Divide it into YEAR 1, YEAR 2, YEAR 3, YEAR 4. For each year, give 3 bullet points of subjects and 1 project idea. Format: Use 'YEAR_X:' as a hard separator.` 
-                    })
-                });
+        try {
+            // Added a 15-second timeout controller
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 20000); 
 
-                const data = await response.json();
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    prompt: `Create a 4-year career roadmap for B.Tech ${branch} in ${interest}. Split by YEAR_1:, YEAR_2:, YEAR_3:, YEAR_4:.` 
+                }),
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) throw new Error(`Server Error: ${response.status}`);
+
+            const data = await response.json();
+            
+            if (data.roadmap) {
+                const sections = data.roadmap.split(/YEAR_\d:|YEAR \d:|Year \d:/i).filter(s => s.trim().length > 10).slice(0, 4);
                 
-                if (data.roadmap) {
-                    // Logic to handle different model naming styles from backend
-                    const sections = data.roadmap.split(/YEAR_\d:|YEAR \d:|Year \d:/i).filter(s => s.trim().length > 10).slice(0, 4);
-                    
-                    container.innerHTML = sections.map((text, i) => `
-                        <div class="bento-card glass p-8 rounded-[2.5rem]">
-                            <div class="flex justify-between items-center mb-5">
-                                <span class="text-blue-400 font-black text-[10px] uppercase tracking-widest">Phase 0${i+1}</span>
-                                <div class="text-slate-600 font-black text-xl italic">Y${i+1}</div>
-                            </div>
-                            <div class="text-slate-300 text-sm leading-relaxed space-y-2">
-                                ${text.replace(/\*/g, '•').replace(/\n/g, '<br>')}
-                            </div>
-                        </div>
-                    `).join('');
+                if(sections.length === 0) {
+                   container.innerHTML = `<div class="col-span-full text-center p-10 glass rounded-2xl border-orange-500/50 border text-orange-400">AI response format is different. Try clicking again.</div>`;
+                   return;
                 }
-            } catch (err) {
-                container.innerHTML = `<div class="col-span-full text-red-500 text-center py-20 font-bold">BACKEND ERROR: MODEL NOT FOUND OR QUOTA EXCEEDED</div>`;
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `Generate Roadmap 🚀`;
+
+                container.innerHTML = sections.map((text, i) => `
+                    <div class="bento-card glass p-8 rounded-[2.5rem]">
+                        <div class="flex justify-between items-center mb-5">
+                            <span class="text-blue-400 font-black text-[10px] uppercase tracking-widest">Phase 0${i+1}</span>
+                            <div class="text-slate-600 font-black text-xl italic font-serif">Y${i+1}</div>
+                        </div>
+                        <div class="text-slate-300 text-sm leading-relaxed space-y-2">
+                            ${text.replace(/\*/g, '•').replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                throw new Error("Empty roadmap data");
             }
-        });
+
+        } catch (err) {
+            console.error("Fetch Error:", err);
+            container.innerHTML = `
+                <div class="col-span-full p-10 glass rounded-[2.5rem] border-red-500/30 border text-center">
+                    <p class="text-red-400 font-bold uppercase tracking-widest mb-2 text-sm">Connection Failed</p>
+                    <p class="text-slate-500 text-xs">${err.message === 'The user aborted a request.' ? 'Request Timed Out (Server Busy)' : err.message}</p>
+                    <button onclick="location.reload()" class="mt-4 text-[10px] text-blue-400 underline uppercase tracking-widest">Retry Connection</button>
+                </div>
+            `;
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `Generate Roadmap 🚀`;
+        }
+    });
     </script>
+    
 </body>
 </html>
