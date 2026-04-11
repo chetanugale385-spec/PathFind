@@ -11,6 +11,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background: radial-gradient(circle at top right, #1e293b, #020617);
             color: #f8fafc;
+            min-height: 100-vh;
         }
         .glass { 
             background: rgba(15, 23, 42, 0.7); 
@@ -18,90 +19,65 @@
             border: 1px solid rgba(255, 255, 255, 0.1); 
         }
         .bento-card {
-            transition: all 0.4s ease;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .bento-card:hover {
             transform: translateY(-8px);
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(30, 41, 59, 0.9);
             border-color: #3b82f6;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
         }
         .gradient-text {
             background: linear-gradient(135deg, #60a5fa 0%, #22d3ee 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="flex flex-col">
 
     <nav class="p-6 flex justify-between items-center glass sticky top-0 z-50">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center font-black text-white italic">P</div>
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center font-black text-white italic shadow-lg shadow-blue-500/20">P</div>
             <div>
                 <h1 class="text-xl font-extrabold tracking-tighter gradient-text">PathFind AI</h1>
                 <p class="text-[7px] tracking-[0.4em] uppercase text-slate-500 font-bold">Universal Engineering Edition</p>
             </div>
         </div>
         <div class="hidden sm:block">
-            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] border border-white/10 px-4 py-2 rounded-full">ZCOER Student Portal</span>
+            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] border border-white/10 px-4 py-2 rounded-full">ZCOER Student Portal</span>
         </div>
     </nav>
 
-    <main class="flex-grow flex flex-col lg:flex-row p-6 gap-8 w-full max-w-[1600px] mx-auto">
+    <main class="flex-grow flex flex-col lg:flex-row p-6 gap-8 w-full max-w-[1400px] mx-auto">
         
         <aside class="lg:w-[350px] space-y-6 flex-shrink-0">
             <div class="glass p-8 rounded-[2.5rem] shadow-2xl space-y-8">
                 <div>
-                    <label class="block text-[10px] font-black text-blue-400 uppercase mb-3 tracking-widest">Select Your Branch</label>
+                    <label class="block text-[10px] font-black text-blue-400 uppercase mb-3 tracking-widest">Academic Branch</label>
                     <select id="branch" class="w-full bg-slate-900/80 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:ring-2 ring-blue-500 transition-all text-slate-200">
-                        <optgroup label="Core Engineering" class="bg-slate-900">
-                            <option value="Mechanical Engineering">Mechanical Engineering</option>
-                            <option value="Civil Engineering">Civil Engineering</option>
-                            <option value="Electrical Engineering">Electrical Engineering</option>
-                            <option value="E&TC Engineering">E&TC Engineering</option>
-                        </optgroup>
-                        <optgroup label="Computing & Tech" class="bg-slate-900">
-                            <option value="AIML" selected>B.Tech AIML</option>
-                            <option value="Computer Engineering">Computer Engineering</option>
-                            <option value="IT Engineering">Information Technology</option>
-                            <option value="Cybersecurity">Cybersecurity</option>
-                            <option value="Data Science">Data Science</option>
-                        </optgroup>
-                        <optgroup label="Modern Fields" class="bg-slate-900">
-                            <option value="Robotics & Automation">Robotics & Automation</option>
-                            <option value="Chemical Engineering">Chemical Engineering</option>
-                            <option value="Automobile Engineering">Automobile Engineering</option>
-                        </optgroup>
+                        <option value="AIML">B.Tech AIML</option>
+                        <option value="Computer">Computer Engineering</option>
+                        <option value="Mechanical">Mechanical Engineering</option>
+                        <option value="Civil">Civil Engineering</option>
+                        <option value="Electrical">Electrical Engineering</option>
+                        <option value="E&TC">E&TC Engineering</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-black text-blue-400 uppercase mb-3 tracking-widest">Your Core Interest</label>
-                    <input type="text" id="interest" placeholder="e.g. AI, EV, Structural Design" 
+                    <label class="block text-[10px] font-black text-blue-400 uppercase mb-3 tracking-widest">Core Interest</label>
+                    <input type="text" id="interest" placeholder="e.g. Robotics, App Dev, EV" 
                            class="w-full bg-slate-900/80 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:ring-2 ring-blue-500 transition-all placeholder:text-slate-700">
                 </div>
 
-                <button id="generate-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-sm tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95 uppercase flex items-center justify-center gap-3">
+                <button id="generate-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-sm tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95 uppercase">
                     Generate Roadmap 🚀
                 </button>
             </div>
-            
-            <div class="glass p-5 rounded-[1.5rem] border-dashed border-white/10 text-center">
-                <p class="text-[10px] text-slate-500 font-bold uppercase">System: Stable Connection</p>
-            </div>
         </aside>
 
-        <section id="output-section" class="flex-grow hidden animate-fade-in">
-            <div class="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
-                <h2 class="text-2xl font-extrabold italic tracking-tight">Career Architecture</h2>
-                <div class="w-3 h-3 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_15px_#22d3ee]"></div>
-            </div>
-            
+        <section id="output-section" class="flex-grow hidden">
+            <h2 class="text-2xl font-extrabold italic tracking-tight mb-8 gradient-text">4-Year Career Blueprint</h2>
             <div id="roadmap-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 </div>
         </section>
@@ -119,81 +95,54 @@
     </footer>
 
     <script>
-    const API_URL = "https://path-find-one.vercel.app/generate";
+        // Use relative path if using vercel.json rewrites, or direct URL
+        const API_URL = "/generate"; 
 
-    document.getElementById('generate-btn').addEventListener('click', async () => {
-        const branch = document.getElementById('branch').value;
-        const interest = document.getElementById('interest').value;
-        const btn = document.getElementById('generate-btn');
-        const output = document.getElementById('output-section');
-        const container = document.getElementById('roadmap-container');
+        document.getElementById('generate-btn').addEventListener('click', async () => {
+            const branch = document.getElementById('branch').value;
+            const interest = document.getElementById('interest').value;
+            const btn = document.getElementById('generate-btn');
+            const output = document.getElementById('output-section');
+            const container = document.getElementById('roadmap-container');
 
-        if (!interest.trim()) return alert("Please enter your interest!");
+            if (!interest.trim()) return alert("Bhai, focus area toh dalo!");
 
-        // Reset UI
-        btn.disabled = true;
-        btn.innerHTML = `<span class="animate-spin">◌</span> ANALYZING...`;
-        output.classList.remove('hidden');
-        container.innerHTML = `<div class="col-span-full py-20 text-center animate-pulse text-blue-400 font-bold tracking-widest uppercase text-xs">Connecting to Gemini AI Engine...</div>`;
+            btn.disabled = true;
+            btn.innerHTML = `PROCESSING...`;
+            output.classList.remove('hidden');
+            container.innerHTML = `<div class="col-span-full py-20 text-center animate-pulse text-slate-500 font-bold uppercase tracking-widest">Analyzing Branch Data...</div>`;
 
-        try {
-            // Added a 15-second timeout controller
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 20000); 
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: `Act as a career expert for ${branch} engineering. Create a 4-year roadmap focused on ${interest}. Use markers YEAR_1:, YEAR_2:, YEAR_3:, YEAR_4: for each phase.` 
+                    })
+                });
 
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    prompt: `Create a 4-year career roadmap for B.Tech ${branch} in ${interest}. Split by YEAR_1:, YEAR_2:, YEAR_3:, YEAR_4:.` 
-                }),
-                signal: controller.signal
-            });
-
-            clearTimeout(timeoutId);
-
-            if (!response.ok) throw new Error(`Server Error: ${response.status}`);
-
-            const data = await response.json();
-            
-            if (data.roadmap) {
-                const sections = data.roadmap.split(/YEAR_\d:|YEAR \d:|Year \d:/i).filter(s => s.trim().length > 10).slice(0, 4);
+                const data = await response.json();
                 
-                if(sections.length === 0) {
-                   container.innerHTML = `<div class="col-span-full text-center p-10 glass rounded-2xl border-orange-500/50 border text-orange-400">AI response format is different. Try clicking again.</div>`;
-                   return;
+                if (data.roadmap) {
+                    const years = data.roadmap.split(/YEAR_\d:/i).filter(s => s.length > 20).slice(0, 4);
+                    container.innerHTML = years.map((content, i) => `
+                        <div class="bento-card glass p-8 rounded-[2.5rem]">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-blue-400 font-black text-[10px] uppercase tracking-widest">Year 0${i+1}</span>
+                            </div>
+                            <div class="text-slate-300 text-sm leading-relaxed">${content.replace(/\*/g, '').replace(/\n/g, '<br>')}</div>
+                        </div>
+                    `).join('');
+                } else if (data.error) {
+                    throw new Error(data.error);
                 }
-
-                container.innerHTML = sections.map((text, i) => `
-                    <div class="bento-card glass p-8 rounded-[2.5rem]">
-                        <div class="flex justify-between items-center mb-5">
-                            <span class="text-blue-400 font-black text-[10px] uppercase tracking-widest">Phase 0${i+1}</span>
-                            <div class="text-slate-600 font-black text-xl italic font-serif">Y${i+1}</div>
-                        </div>
-                        <div class="text-slate-300 text-sm leading-relaxed space-y-2">
-                            ${text.replace(/\*/g, '•').replace(/\n/g, '<br>')}
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                throw new Error("Empty roadmap data");
+            } catch (err) {
+                container.innerHTML = `<div class="col-span-full text-red-400 text-center py-10 glass rounded-2xl border-red-500/20">${err.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `Generate Roadmap 🚀`;
             }
-
-        } catch (err) {
-            console.error("Fetch Error:", err);
-            container.innerHTML = `
-                <div class="col-span-full p-10 glass rounded-[2.5rem] border-red-500/30 border text-center">
-                    <p class="text-red-400 font-bold uppercase tracking-widest mb-2 text-sm">Connection Failed</p>
-                    <p class="text-slate-500 text-xs">${err.message === 'The user aborted a request.' ? 'Request Timed Out (Server Busy)' : err.message}</p>
-                    <button onclick="location.reload()" class="mt-4 text-[10px] text-blue-400 underline uppercase tracking-widest">Retry Connection</button>
-                </div>
-            `;
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = `Generate Roadmap 🚀`;
-        }
-    });
+        });
     </script>
-    
 </body>
 </html>
