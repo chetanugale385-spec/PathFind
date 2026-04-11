@@ -6,34 +6,31 @@ import google.generativeai as genai
 app = Flask(__name__)
 CORS(app)
 
-# 1. API KEY CHECK
+# Vercel Environment Variable madhun key ghene
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
 @app.route('/generate', methods=['POST'])
 def generate():
     try:
         if not API_KEY:
-            return jsonify({"error": "API Key Missing"}), 500
+            return jsonify({"error": "Backend Config Error: API Key Missing"}), 500
         
         genai.configure(api_key=API_KEY)
-        
-        # 2. MODEL NAME FIX (Use this specific one)
         model = genai.GenerativeModel('gemini-1.5-flash')
         
         data = request.get_json()
-        prompt = data.get('prompt')
+        prompt_text = data.get('prompt', 'Create a general engineering roadmap')
         
-        response = model.generate_content(prompt)
+        # AI कडून प्रतिसाद मिळवणे
+        response = model.generate_content(prompt_text)
         
-        if response.text:
+        if response and response.text:
             return jsonify({"roadmap": response.text})
         else:
-            return jsonify({"error": "Empty Response"}), 500
+            return jsonify({"error": "AI response was empty"}), 500
             
     except Exception as e:
-        # Ye line logs mein error dikhayegi
-        print(f"CRASH ERROR: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        print(f"Error: {str(e)}") # He Vercel logs madhe disel
+        return jsonify({"error": "AI Connection Timeout. Please try again."}), 500
 
-# For Vercel
 app = app
